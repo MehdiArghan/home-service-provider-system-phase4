@@ -7,8 +7,10 @@ import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsResponse;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
+import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class ExpertController {
     final OrdersService ordersService;
     final ExpertSuggestionsService expertSuggestionsService;
     final CommentsService commentsService;
+    final WalletService walletService;
 
     @PostMapping("/addExpert")
     public ResponseEntity<ExpertSummaryResponse> saveExpert(
@@ -61,5 +64,10 @@ public class ExpertController {
     @GetMapping(value = "/findAllOrders")
     public ResponseEntity<List<OrdersResponse>> findAllOrders(@Valid @RequestBody SubDutyRequestWithName request) {
         return new ResponseEntity<>(ordersService.findAllOrderWaitingForSpecialistSuggestion(request), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/showWallet")
+    public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody PersonRequestWithEmail request) {
+        return new ResponseEntity<>(walletService.findWallet(request, "expert"), HttpStatus.OK);
     }
 }

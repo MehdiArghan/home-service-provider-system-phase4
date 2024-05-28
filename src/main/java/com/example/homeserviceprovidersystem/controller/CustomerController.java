@@ -14,6 +14,7 @@ import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggesti
 import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
 import com.example.homeserviceprovidersystem.service.*;
@@ -137,7 +138,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "/showWallet")
-    public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody CustomerRequestWithEmail request) {
+    public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody PersonRequestWithEmail request) {
         return new ResponseEntity<>(walletService.findWallet(request, "customer"), HttpStatus.OK);
     }
 

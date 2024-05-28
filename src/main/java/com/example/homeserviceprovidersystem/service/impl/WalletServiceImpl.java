@@ -1,6 +1,7 @@
 package com.example.homeserviceprovidersystem.service.impl;
 
-import com.example.homeserviceprovidersystem.dto.customer.CustomerRequestWithEmail;
+import com.example.homeserviceprovidersystem.customeException.CustomBadRequestException;
+import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
 import com.example.homeserviceprovidersystem.entity.Customer;
 import com.example.homeserviceprovidersystem.entity.Expert;
@@ -39,13 +40,15 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse findWallet(CustomerRequestWithEmail request, String person) {
+    public WalletResponse findWallet(PersonRequestWithEmail request, String person) {
         if (person.equals("customer")) {
-            Customer customer = customerService.findByEmail(request.getCustomerEmail());
+            Customer customer = customerService.findByEmail(request.getPersonEmail());
             return walletMapper.walletToWalletResponse(customer.getWallet());
-        } else {
-            Expert expert = expertService.findByEmail(request.getCustomerEmail());
+        } else if (person.equals("expert")) {
+            Expert expert = expertService.findByEmail(request.getPersonEmail());
             return walletMapper.walletToWalletResponse(expert.getWallet());
+        } else {
+            throw new CustomBadRequestException("please enter the correct email address");
         }
     }
 }
