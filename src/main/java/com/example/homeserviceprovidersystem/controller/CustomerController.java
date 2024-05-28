@@ -15,6 +15,7 @@ import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
+import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ public class CustomerController {
     final ExpertSuggestionsService expertSuggestionsService;
     final CommentsService commentsService;
     final CaptchaService captchaService;
+    final WalletService walletService;
 
     @PostMapping("/addCustomer")
     public ResponseEntity<CustomerResponse> saveCustomer(@Valid @RequestBody CustomerRequest request) {
@@ -132,6 +134,11 @@ public class CustomerController {
     @GetMapping(value = "/findAllPaidOrders")
     public ResponseEntity<List<OrdersResponse>> findAllPaidOrders(@Valid @RequestBody CustomerRequestWithEmail request) {
         return new ResponseEntity<>(ordersService.findAllPaidOrders(request), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/showWallet")
+    public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody CustomerRequestWithEmail request) {
+        return new ResponseEntity<>(walletService.findWallet(request, "customer"), HttpStatus.OK);
     }
 
     @GetMapping(value = "/onlinePaymentPortal/{customerEmail}/{orderId}")
