@@ -65,7 +65,10 @@ public class ExpertController {
     public ResponseEntity<List<OrdersResponse>> findAllOrders(@Valid @RequestBody SubDutyRequestWithName request) {
         return new ResponseEntity<>(ordersService.findAllOrderWaitingForSpecialistSuggestion(request), HttpStatus.OK);
     }
-
+    @GetMapping(value = "/historyOrders")
+    public ResponseEntity<List<OrdersResponse>> findAllOrders(@Valid @RequestBody PersonRequestWithEmail request) {
+        return new ResponseEntity<>(ordersService.findAllOrders(request,"expert"), HttpStatus.OK);
+    }
     @GetMapping(value = "/showWallet")
     public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody PersonRequestWithEmail request) {
         return new ResponseEntity<>(walletService.findWallet(request, "expert"), HttpStatus.OK);
