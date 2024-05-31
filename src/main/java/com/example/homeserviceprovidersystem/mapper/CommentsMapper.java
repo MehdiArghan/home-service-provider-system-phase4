@@ -12,7 +12,7 @@ public interface CommentsMapper {
     @Mapping(source = "orders.proposedPrice", target = "proposedPrice")
     @Mapping(source = "orders.jobDescription", target = "jobDescription")
     @Mapping(source = "orders.dateOfWork", target = "dateOfWork")
-    @Mapping(source = "orders.timeOfWord", target = "timeOfWord")
+    @Mapping(source = "orders.timeOfWork", target = "timeOfWork")
     @Mapping(source = "orders.address", target = "address")
     @Mapping(source = "orders.orderStatus", target = "orderStatus")
     @Mapping(source = "orders.subDuty.name", target = "subDutyName")

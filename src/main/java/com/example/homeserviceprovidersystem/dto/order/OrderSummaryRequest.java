@@ -33,7 +33,7 @@ public class OrderSummaryRequest {
     LocalDate dateOfWork;
     @DateTimeFormat(pattern = "HH:mm:ss")
     @NotNull(message = "Please enter an appropriate time")
-    LocalTime TimeOfWord;
+    LocalTime TimeOfWork;
     @Valid
     AddressRequest address;
 }

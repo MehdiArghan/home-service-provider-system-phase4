@@ -33,10 +33,9 @@ public class OrderRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Please enter the appropriate date")
     LocalDate dateOfWork;
-    @FutureOrPresent(message = "time must be in the present or future")
     @DateTimeFormat(pattern = "HH:mm:ss")
     @NotNull(message = "Please enter an appropriate time")
-    LocalTime TimeOfWord;
+    LocalTime TimeOfWork;
     @Valid
     AddressRequest address;
 }

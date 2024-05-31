@@ -31,7 +31,6 @@ public class ExpertSuggestionsSummaryRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Please enter the appropriate date")
     LocalDate DateOfStartWork;
-    @FutureOrPresent(message = "time must be in the present or future")
     @DateTimeFormat(pattern = "HH:mm:ss")
     @NotNull(message = "Please enter an appropriate time")
     LocalTime TimeOfStartWork;

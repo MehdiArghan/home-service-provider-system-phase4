@@ -3,6 +3,7 @@ package com.example.homeserviceprovidersystem.repositroy;
 import com.example.homeserviceprovidersystem.entity.Orders;
 import com.example.homeserviceprovidersystem.entity.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrdersRepository extends JpaRepository<Orders, Long> {
+public interface OrdersRepository extends JpaRepository<Orders, Long>, JpaSpecificationExecutor<Orders> {
     @Query("from Orders order where order.subDuty.name=:SUBDUTYNAME and (order.orderStatus =:SUGGESTION or order.orderStatus =:SELECTION)")
     List<Orders> findAllOrdersByOrderStatus(@Param("SUBDUTYNAME") String subDutyName, @Param("SUGGESTION") OrderStatus suggestion,
                                             @Param("SELECTION") OrderStatus selection);
@@ -27,7 +28,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             "order.ProposedPrice=:PROPOSEDPRICE and " +
             "order.jobDescription=:JOBDESCRIPTION and " +
             "order.dateOfWork=:DATEOFWORK and " +
-            "order.TimeOfWord=:TIMEOFWORK and " +
+            "order.timeOfWork=:TIMEOFWORK and " +
             "order.address.province=:PROVINCE and " +
             "order.address.city=:CITY and " +
             "order.address.street=:STREET and " +
@@ -39,7 +40,7 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             @Param("PROPOSEDPRICE") double ProposedPrice,
             @Param("JOBDESCRIPTION") String jobDescription,
             @Param("DATEOFWORK") LocalDate dateOfWork,
-            @Param("TIMEOFWORK") LocalTime TimeOfWord,
+            @Param("TIMEOFWORK") LocalTime TimeOfWork,
             @Param("PROVINCE") String province,
             @Param("CITY") String city,
             @Param("STREET") String street,

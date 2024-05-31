@@ -8,6 +8,7 @@ import com.example.homeserviceprovidersystem.dto.cardInformation.CardInformation
 import com.example.homeserviceprovidersystem.dto.customer.CustomerRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
+import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequestWithOrderStatus;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
 import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
@@ -17,16 +18,20 @@ import com.example.homeserviceprovidersystem.entity.enums.OrderStatus;
 import com.example.homeserviceprovidersystem.mapper.OrdersMapper;
 import com.example.homeserviceprovidersystem.repositroy.OrdersRepository;
 import com.example.homeserviceprovidersystem.service.*;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -69,13 +74,23 @@ public class OrdersServiceImpl implements OrdersService {
     public OrdersResponse save(OrderRequest request) {
         Customer customer = customerService.findByEmail(request.getCustomerEmail());
         SubDuty subDuty = subDutyService.findByName(request.getSubDutyName());
-        if (subDuty.getBasePrice() > request.getProposedPrice()) {
-            throw new CustomBadRequestException("Proposed price must be greater than or equal to the base price of the subDuty");
-        }
+        validateOrderRequest(subDuty, request);
         Address address = createAddress(request.getAddress());
         Orders orders = createOrders(request, customer, subDuty, address);
         return ordersMapper.orderToOrdersResponse(ordersRepository.save(orders));
     }
+
+    private void validateOrderRequest(SubDuty subDuty, OrderRequest request) {
+        if (subDuty.getBasePrice() > request.getProposedPrice()) {
+            throw new CustomBadRequestException("Proposed price must be greater than or equal to the base price of the subDuty");
+        }
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime orderTime = LocalDateTime.of(request.getDateOfWork(), request.getTimeOfWork());
+        if (orderTime.isBefore(now)) {
+            throw new CustomBadRequestException("The start date and time must be at a date and time after now");
+        }
+    }
+
 
     @Override
     public Orders save(Orders orders) {
@@ -96,7 +111,7 @@ public class OrdersServiceImpl implements OrdersService {
         orders.setProposedPrice(request.getProposedPrice());
         orders.setJobDescription(request.getJobDescription());
         orders.setDateOfWork(request.getDateOfWork());
-        orders.setTimeOfWord(request.getTimeOfWord());
+        orders.setTimeOfWork(request.getTimeOfWork());
         orders.setAddress(address);
         orders.setCustomer(customer);
         orders.setSubDuty(subDuty);
@@ -115,14 +130,14 @@ public class OrdersServiceImpl implements OrdersService {
 
     private Orders findOrderByOrderInformation(OrderSummaryRequest request, OrderStatus orderStatus) {
         return ordersRepository.findByOrderInformation(request.getSubDutyName(), request.getCustomerEmail(), request.getProposedPrice()
-                , request.getJobDescription(), request.getDateOfWork(), request.getTimeOfWord(), request.getAddress().getProvince(),
+                , request.getJobDescription(), request.getDateOfWork(), request.getTimeOfWork(), request.getAddress().getProvince(),
                 request.getAddress().getCity(), request.getAddress().getStreet(), request.getAddress().getPostalCode(),
                 orderStatus).orElseThrow(() -> new CustomEntityNotFoundException("no order was found"));
     }
 
     private void validateOrder(Orders orders) {
         LocalDateTime timeNow = LocalDateTime.now();
-        LocalDateTime timeOrder = LocalDateTime.of(orders.getDateOfWork(), orders.getTimeOfWord());
+        LocalDateTime timeOrder = LocalDateTime.of(orders.getDateOfWork(), orders.getTimeOfWork());
         if (timeNow.isBefore(timeOrder))
             throw new CustomBadRequestException("The start date and time must be on or after the order date and time");
     }
@@ -263,6 +278,74 @@ public class OrdersServiceImpl implements OrdersService {
                 OrderStatus.ORDER_STARTED,
                 OrderStatus.ORDER_DONE,
                 OrderStatus.ORDER_PAID);
+    }
+
+    @Override
+    public List<OrdersResponse> findOrdersByDynamicSearch(OrderSummaryRequestWithOrderStatus request) {
+        Specification<Orders> specification = Specification.where(null);
+        boolean isRequestValid = false;
+
+        if (isNotEmpty(request.getDutyName())) {
+            specification = specification.and(hasDutyName(request.getDutyName()));
+            isRequestValid = true;
+        }
+        if (isNotEmpty(request.getSubDutyName())) {
+            specification = specification.and(hasSubDutyName(request.getSubDutyName()));
+            isRequestValid = true;
+        }
+        if (request.getDateOfWork() != null) {
+            specification = specification.and(hasDateOfWork(request.getDateOfWork()));
+            isRequestValid = true;
+        }
+        if (request.getTimeOfWork() != null) {
+            specification = specification.and(hasTimeOfWork(request.getTimeOfWork()));
+            isRequestValid = true;
+        }
+        if (request.getOrderStatus() != null) {
+            specification = specification.and(hasOrderStatus(request.getOrderStatus()));
+            isRequestValid = true;
+        }
+        if (!isRequestValid) {
+            throw new CustomBadRequestException("There is no result");
+        }
+        List<Orders> ordersList = ordersRepository.findAll(specification);
+        if (ordersList.isEmpty()) {
+            throw new CustomBadRequestException("There is no result");
+        } else {
+            return ordersList.stream().map(ordersMapper::orderToOrdersResponse).toList();
+        }
+    }
+
+    private boolean isNotEmpty(String str) {
+        return str != null && !str.isEmpty();
+    }
+
+    private Specification<Orders> hasDutyName(String dutyName) {
+        return ((root, query, criteriaBuilder) -> {
+            Join<Orders, SubDuty> ordersSubDutyJoin = root.join("subDuty", JoinType.INNER);
+            Join<SubDuty, Duty> subDutyDutyJoin = ordersSubDutyJoin.join("duty", JoinType.INNER);
+            return criteriaBuilder.equal(subDutyDutyJoin.get("name"), dutyName);
+        });
+    }
+
+    private Specification<Orders> hasSubDutyName(String subDutyName) {
+        return ((root, query, criteriaBuilder) -> {
+            Join<Orders, SubDuty> ordersSubDutyJoin = root.join("subDuty");
+            return criteriaBuilder.equal(ordersSubDutyJoin.get("name"), subDutyName);
+        });
+    }
+
+    private Specification<Orders> hasDateOfWork(LocalDate dateOfWork) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("dateOfWork"), dateOfWork);
+    }
+
+    private Specification<Orders> hasTimeOfWork(LocalTime timeOfWord) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("TimeOfWork"), timeOfWord);
+    }
+
+
+    private Specification<Orders> hasOrderStatus(OrderStatus orderStatus) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("orderStatus"), orderStatus);
     }
 
     @Override

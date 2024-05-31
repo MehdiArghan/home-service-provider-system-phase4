@@ -23,7 +23,7 @@ public class CommentResponse extends BaseEntity<Long> {
     double proposedPrice;
     String jobDescription;
     LocalDate dateOfWork;
-    LocalTime timeOfWord;
+    LocalTime timeOfWork;
     AddressResponse address;
     OrderStatus orderStatus;
     String subDutyName;

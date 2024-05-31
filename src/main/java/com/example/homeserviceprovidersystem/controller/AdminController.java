@@ -7,15 +7,13 @@ import com.example.homeserviceprovidersystem.dto.duty.DutyResponse;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
+import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequestWithOrderStatus;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequest;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithBasePrice;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithDescription;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
-import com.example.homeserviceprovidersystem.service.CustomerService;
-import com.example.homeserviceprovidersystem.service.DutyService;
-import com.example.homeserviceprovidersystem.service.ExpertService;
-import com.example.homeserviceprovidersystem.service.SubDutyService;
+import com.example.homeserviceprovidersystem.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +30,7 @@ public class AdminController {
     final SubDutyService subDutyService;
     final ExpertService expertService;
     final CustomerService customerService;
+    final OrdersService ordersService;
 
     @PostMapping(value = "/addDuty")
     public ResponseEntity<DutyResponse> saveDuty(@Valid @RequestBody DutyRequest dutyRequest) {
@@ -81,5 +80,10 @@ public class AdminController {
     @GetMapping("/searchExpert")
     public ResponseEntity<List<ExpertSummaryResponse>> searchExpert(@Valid @RequestBody ExpertSummaryRequest request) {
         return new ResponseEntity<>(expertService.findExpertsByDynamicSearch(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchOrders")
+    public ResponseEntity<List<OrdersResponse>> searchOrders(@Valid @RequestBody OrderSummaryRequestWithOrderStatus request) {
+        return new ResponseEntity<>(ordersService.findOrdersByDynamicSearch(request), HttpStatus.OK);
     }
 }

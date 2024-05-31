@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-05-31T12:44:05+0330",
+    date = "2024-05-31T22:21:02+0330",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 20.0.1 (Oracle Corporation)"
 )
 @Component
@@ -32,7 +32,7 @@ public class CommentsMapperImpl implements CommentsMapper {
         commentResponse.setProposedPrice( commentsOrdersProposedPrice( comments ) );
         commentResponse.setJobDescription( commentsOrdersJobDescription( comments ) );
         commentResponse.setDateOfWork( commentsOrdersDateOfWork( comments ) );
-        commentResponse.setTimeOfWord( commentsOrdersTimeOfWord( comments ) );
+        commentResponse.setTimeOfWork( commentsOrdersTimeOfWork( comments ) );
         commentResponse.setAddress( addressToAddressResponse( commentsOrdersAddress( comments ) ) );
         commentResponse.setOrderStatus( commentsOrdersOrderStatus( comments ) );
         commentResponse.setSubDutyName( commentsOrdersSubDutyName( comments ) );
@@ -98,7 +98,7 @@ public class CommentsMapperImpl implements CommentsMapper {
         return dateOfWork;
     }
 
-    private LocalTime commentsOrdersTimeOfWord(Comments comments) {
+    private LocalTime commentsOrdersTimeOfWork(Comments comments) {
         if ( comments == null ) {
             return null;
         }
@@ -106,11 +106,11 @@ public class CommentsMapperImpl implements CommentsMapper {
         if ( orders == null ) {
             return null;
         }
-        LocalTime timeOfWord = orders.getTimeOfWord();
-        if ( timeOfWord == null ) {
+        LocalTime timeOfWork = orders.getTimeOfWork();
+        if ( timeOfWork == null ) {
             return null;
         }
-        return timeOfWord;
+        return timeOfWork;
     }
 
     private Address commentsOrdersAddress(Comments comments) {

@@ -92,6 +92,7 @@ com\example\homeserviceprovidersystem\mapper\WalletMapperImpl.class
 com\example\homeserviceprovidersystem\dto\person\PersonResponse.class
 com\example\homeserviceprovidersystem\service\impl\CaptchaServiceImpl.class
 com\example\homeserviceprovidersystem\mapper\WalletMapper.class
+com\example\homeserviceprovidersystem\dto\order\OrderSummaryRequestWithOrderStatus.class
 com\example\homeserviceprovidersystem\repositroy\WalletRepository.class
 com\example\homeserviceprovidersystem\customeException\GlobalException.class
 com\example\homeserviceprovidersystem\service\CommentsService.class

@@ -20,7 +20,7 @@ public class Orders extends BaseEntity<Long> {
     double ProposedPrice;
     String jobDescription;
     LocalDate dateOfWork;
-    LocalTime TimeOfWord;
+    LocalTime timeOfWork;
     @Embedded
     Address address;
     @Enumerated(EnumType.STRING)
@@ -32,11 +32,11 @@ public class Orders extends BaseEntity<Long> {
     @ManyToOne
     SubDuty subDuty;
 
-    public Orders(double proposedPrice, String jobDescription, LocalDate dateOfWork, LocalTime timeOfWord, Address address) {
+    public Orders(double proposedPrice, String jobDescription, LocalDate dateOfWork, LocalTime timeOfWork, Address address) {
         ProposedPrice = proposedPrice;
         this.jobDescription = jobDescription;
         this.dateOfWork = dateOfWork;
-        TimeOfWord = timeOfWord;
+        this.timeOfWork = timeOfWork;
         this.address = address;
     }
 }

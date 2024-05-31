@@ -22,7 +22,7 @@ public class OrdersResponse extends BaseEntity<Long> {
     double ProposedPrice;
     String jobDescription;
     LocalDate dateOfWork;
-    LocalTime TimeOfWord;
+    LocalTime TimeOfWork;
     AddressResponse address;
     OrderStatus orderStatus;
     String subDutyName;

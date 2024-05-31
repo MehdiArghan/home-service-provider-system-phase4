@@ -72,7 +72,7 @@ public class ExpertSuggestionsImpl implements ExpertSuggestionsService {
             throw new CustomBadRequestException("Please select the order related to your specialty or " +
                     "Proposed price must be greater than or equal to the base price of the subDuty");
         }
-        LocalDateTime orderTime = LocalDateTime.of(orders.getDateOfWork(), orders.getTimeOfWord());
+        LocalDateTime orderTime = LocalDateTime.of(orders.getDateOfWork(), orders.getTimeOfWork());
         LocalDateTime expertSuggestionTime = LocalDateTime.of(expertSuggestionsSummaryRequest.getDateOfStartWork(), expertSuggestionsSummaryRequest.getTimeOfStartWork());
         if (expertSuggestionTime.isBefore(orderTime)) {
             throw new CustomBadRequestException("The start date and time must be on or after the order date and time");
