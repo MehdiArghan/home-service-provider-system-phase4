@@ -46,4 +46,10 @@ public interface OrdersRepository extends JpaRepository<Orders, Long> {
             @Param("POSTALCODE") String postalCode,
             @Param("ORDERSTATUS") OrderStatus orderStatus
     );
+
+    @Query("from Orders order where order.customer.email=:CUSTOMEREMAIL")
+    List<Orders> findAllOrdersCustomer(@Param("CUSTOMEREMAIL") String customerEmail);
+
+    @Query("from Orders order where order.expert.email=:EXPERTEMAIL")
+    List<Orders> findAllOrdersExpert(@Param("EXPERTEMAIL") String expertEmail);
 }

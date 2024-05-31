@@ -9,6 +9,7 @@ import com.example.homeserviceprovidersystem.dto.customer.CustomerRequestWithEma
 import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
 import com.example.homeserviceprovidersystem.entity.*;
 import com.example.homeserviceprovidersystem.entity.enums.ExpertStatus;
@@ -26,9 +27,13 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.example.homeserviceprovidersystem.entity.enums.OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SUGGESTION;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
@@ -96,7 +101,7 @@ public class OrdersServiceImpl implements OrdersService {
         orders.setCustomer(customer);
         orders.setSubDuty(subDuty);
         orders.setExpert(null);
-        orders.setOrderStatus(OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SUGGESTION);
+        orders.setOrderStatus(ORDER_WAITING_FOR_SPECIALIST_SUGGESTION);
         return orders;
     }
 
@@ -177,7 +182,7 @@ public class OrdersServiceImpl implements OrdersService {
     public List<OrdersResponse> findAllOrderWaitingForSpecialistSuggestion(SubDutyRequestWithName request) {
         List<Orders> allOrdersByOrderStatus = ordersRepository.findAllOrdersByOrderStatus(
                 request.getNameSubDuty(),
-                OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SUGGESTION,
+                ORDER_WAITING_FOR_SPECIALIST_SUGGESTION,
                 OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SELECTION);
         if (allOrdersByOrderStatus.isEmpty()) {
             throw new CustomResourceNotFoundException("There is no result");
@@ -228,6 +233,36 @@ public class OrdersServiceImpl implements OrdersService {
         } else {
             return findAllOrder.stream().map(ordersMapper::orderToOrdersResponse).toList();
         }
+    }
+
+    @Override
+    public List<OrdersResponse> findAllOrders(PersonRequestWithEmail request, String personType) {
+
+        List<Orders> ordersList = switch (personType) {
+            case "customer" -> ordersRepository.findAllOrdersCustomer(request.getPersonEmail());
+            case "expert" -> ordersRepository.findAllOrdersExpert(request.getPersonEmail());
+            default -> throw new CustomBadRequestException("Invalid person type");
+        };
+
+        if (ordersList.isEmpty()) {
+            throw new CustomBadRequestException("There is no result");
+        }
+
+        return ordersList.stream()
+                .filter(orders -> findAllOrderStatus().contains(orders.getOrderStatus()))
+                .map(ordersMapper::orderToOrdersResponse)
+                .sorted(Comparator.comparing(OrdersResponse::getOrderStatus))
+                .collect(Collectors.toList());
+    }
+
+    private List<OrderStatus> findAllOrderStatus() {
+        return List.of(
+                OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SUGGESTION,
+                OrderStatus.ORDER_WAITING_FOR_SPECIALIST_SELECTION,
+                OrderStatus.ORDER_WAITING_FOR_SPECIALIST_TO_WORKPLACE,
+                OrderStatus.ORDER_STARTED,
+                OrderStatus.ORDER_DONE,
+                OrderStatus.ORDER_PAID);
     }
 
     @Override

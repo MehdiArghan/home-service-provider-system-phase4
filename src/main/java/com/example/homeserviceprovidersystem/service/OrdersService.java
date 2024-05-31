@@ -5,6 +5,7 @@ import com.example.homeserviceprovidersystem.dto.customer.CustomerRequestWithEma
 import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
 import com.example.homeserviceprovidersystem.entity.Orders;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ public interface OrdersService {
     List<OrdersResponse> findAllStartedOrders(CustomerRequestWithEmail request);
 
     List<OrdersResponse> findAllPaidOrders(CustomerRequestWithEmail request);
+
+    List<OrdersResponse> findAllOrders(PersonRequestWithEmail request,String personType);
 
     String onlinePaymentPortal(String customerEmail, Long orderId, HttpServletRequest request);
 

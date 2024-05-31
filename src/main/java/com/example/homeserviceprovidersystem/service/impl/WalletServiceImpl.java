@@ -3,8 +3,6 @@ package com.example.homeserviceprovidersystem.service.impl;
 import com.example.homeserviceprovidersystem.customeException.CustomBadRequestException;
 import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
-import com.example.homeserviceprovidersystem.entity.Customer;
-import com.example.homeserviceprovidersystem.entity.Expert;
 import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.mapper.WalletMapper;
 import com.example.homeserviceprovidersystem.repositroy.WalletRepository;
@@ -40,15 +38,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse findWallet(PersonRequestWithEmail request, String person) {
-        if (person.equals("customer")) {
-            Customer customer = customerService.findByEmail(request.getPersonEmail());
-            return walletMapper.walletToWalletResponse(customer.getWallet());
-        } else if (person.equals("expert")) {
-            Expert expert = expertService.findByEmail(request.getPersonEmail());
-            return walletMapper.walletToWalletResponse(expert.getWallet());
-        } else {
-            throw new CustomBadRequestException("please enter the correct email address");
-        }
+    public WalletResponse findWallet(PersonRequestWithEmail request, String personType) {
+        Wallet wallet = switch (personType) {
+            case "customer" -> customerService.findByEmail(request.getPersonEmail()).getWallet();
+            case "expert" -> expertService.findByEmail(request.getPersonEmail()).getWallet();
+            default -> throw new CustomBadRequestException("Invalid person type");
+        };
+        return walletMapper.walletToWalletResponse(wallet);
     }
 }

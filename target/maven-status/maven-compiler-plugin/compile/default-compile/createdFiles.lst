@@ -15,6 +15,7 @@ com\example\homeserviceprovidersystem\dto\order\OrderRequest.class
 com\example\homeserviceprovidersystem\dto\subduty\SubDutyResponse.class
 com\example\homeserviceprovidersystem\entity\enums\ExpertStatus.class
 com\example\homeserviceprovidersystem\entity\Expert.class
+com\example\homeserviceprovidersystem\dto\person\PersonRequestWithEmail.class
 com\example\homeserviceprovidersystem\service\impl\SubDutyServiceImpl.class
 com\example\homeserviceprovidersystem\service\impl\CommentServiceImpl.class
 com\example\homeserviceprovidersystem\service\ExpertSuggestionsService.class
