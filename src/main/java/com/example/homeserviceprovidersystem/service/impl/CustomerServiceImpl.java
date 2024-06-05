@@ -14,6 +14,7 @@ import com.example.homeserviceprovidersystem.service.CustomerService;
 import com.example.homeserviceprovidersystem.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,15 +26,18 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final WalletService walletService;
     private final CustomerMapper customerMapper;
+    private final JavaMailSender javaMailSender;
 
     @Autowired
     public CustomerServiceImpl(
             CustomerRepository customerRepository,
             WalletService walletService,
-            CustomerMapper customerMapper) {
+            CustomerMapper customerMapper,
+            JavaMailSender javaMailSender) {
         this.customerRepository = customerRepository;
         this.walletService = walletService;
         this.customerMapper = customerMapper;
+        this.javaMailSender = javaMailSender;
     }
 
     @Override

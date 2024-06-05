@@ -20,7 +20,7 @@ public class PersonRequestWithRegistrationTime {
     @DateTimeFormat(pattern = "HH:mm:ss")
     LocalTime registrationTime;
     @Pattern(regexp = "^$|^[+]?\\d+$", message = "Please enter the correct numberOfRegisteredOrders")
-    int numberOfRegisteredOrders;
+    String numberOfRegisteredOrders;
     @Pattern(regexp = "^$|^[+]?\\d+$", message = "Please enter the correct numberOfOrdersDone")
-    int numberOfOrdersDone;
+    String numberOfOrdersDone;
 }

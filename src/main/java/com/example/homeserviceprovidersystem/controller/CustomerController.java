@@ -139,7 +139,7 @@ public class CustomerController {
 
     @GetMapping(value = "/historyOrders")
     public ResponseEntity<List<OrdersResponse>> findAllOrders(@Valid @RequestBody PersonRequestWithEmail request) {
-        return new ResponseEntity<>(ordersService.findAllOrders(request,"customer"), HttpStatus.OK);
+        return new ResponseEntity<>(ordersService.findAllOrders(request, "customer"), HttpStatus.OK);
     }
 
     @GetMapping(value = "/showWallet")
