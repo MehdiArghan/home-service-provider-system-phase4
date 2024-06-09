@@ -6,7 +6,7 @@ import com.example.homeserviceprovidersystem.dto.comments.CommentRequest;
 import com.example.homeserviceprovidersystem.dto.comments.CommentResponse;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerRequest;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerRequestWithEmail;
-import com.example.homeserviceprovidersystem.dto.customer.CustomerResponse;
+import com.example.homeserviceprovidersystem.dto.customer.CustomerSummaryResponse;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsRequest;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsRequestWithId;
@@ -45,7 +45,7 @@ public class CustomerController {
     final WalletService walletService;
 
     @PostMapping("/addCustomer")
-    public ResponseEntity<CustomerResponse> saveCustomer(@Valid @RequestBody CustomerRequest request) {
+    public ResponseEntity<CustomerSummaryResponse> saveCustomer(@Valid @RequestBody CustomerRequest request) {
         return new ResponseEntity<>(customerService.save(request), HttpStatus.CREATED);
     }
 
@@ -169,5 +169,10 @@ public class CustomerController {
     @GetMapping("/successfullyPayment")
     public String showSuccessfullyPayment() {
         return "successfullyPayment";
+    }
+
+    @GetMapping("/verifyToken")
+    public String verifyToken(@RequestParam("token") String token) {
+        return customerService.verifyToken(token);
     }
 }

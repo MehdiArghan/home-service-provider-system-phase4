@@ -3,7 +3,6 @@ package com.example.homeserviceprovidersystem.service.impl;
 import com.example.homeserviceprovidersystem.customeException.CustomBadRequestException;
 import com.example.homeserviceprovidersystem.customeException.CustomEntityNotFoundException;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerRequest;
-import com.example.homeserviceprovidersystem.dto.customer.CustomerResponse;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerSummaryResponse;
 import com.example.homeserviceprovidersystem.entity.Customer;
@@ -11,45 +10,53 @@ import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.mapper.CustomerMapper;
 import com.example.homeserviceprovidersystem.repositroy.CustomerRepository;
 import com.example.homeserviceprovidersystem.service.CustomerService;
+import com.example.homeserviceprovidersystem.service.EmailService;
 import com.example.homeserviceprovidersystem.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final WalletService walletService;
     private final CustomerMapper customerMapper;
-    private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
+    private String token;
+    private Customer customer;
 
     @Autowired
     public CustomerServiceImpl(
             CustomerRepository customerRepository,
             WalletService walletService,
             CustomerMapper customerMapper,
-            JavaMailSender javaMailSender) {
+            EmailService emailService) {
         this.customerRepository = customerRepository;
         this.walletService = walletService;
         this.customerMapper = customerMapper;
-        this.javaMailSender = javaMailSender;
+        this.emailService = emailService;
     }
 
     @Override
-    public CustomerResponse save(CustomerRequest request) {
+    public CustomerSummaryResponse save(CustomerRequest request) {
         customerRepository.findByEmail(request.getEmail()).ifPresent(existingCustomer -> {
             throw new CustomBadRequestException("Email already exists");
         });
         Customer customer = customerMapper.customerRequestTocustomer(request);
+        String token = UUID.randomUUID().toString();
+        emailService.sendEmail(customer.getEmail(), "Welcome to our Service",
+                "Thank you for registering! Please click the following link to verify your email: "
+                        + "http://localhost:8080/customer/verifyToken?token=" + token);
         customer.setRegistrationDate(LocalDate.now());
         customer.setRegistrationTime(LocalTime.now());
-        customer.setWallet(walletService.save(new Wallet(2000.0)));
-        return customerMapper.customerToCustomerResponse(customerRepository.save(customer));
+        this.token = token;
+        this.customer = customer;
+        return customerMapper.customerToCustomerSummaryResponse(customer);
     }
 
     @Override
@@ -107,5 +114,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     private Specification<Customer> hasEmail(String email) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("email"), "%" + email + "%"));
+    }
+
+    @Override
+    public String verifyToken(String token) {
+        if (token.equals(this.token)) {
+            this.customer.setWallet(walletService.save(new Wallet(2000.0)));
+            customerRepository.save(this.customer);
+            this.token = null;
+            this.customer = null;
+            return "successfulRegistration";
+        } else {
+            return "registrationFailed";
+        }
     }
 }
