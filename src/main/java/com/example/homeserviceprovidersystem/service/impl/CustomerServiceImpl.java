@@ -48,12 +48,12 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomBadRequestException("Email already exists");
         });
         Customer customer = customerMapper.customerRequestTocustomer(request);
+        customer.setRegistrationDate(LocalDate.now());
+        customer.setRegistrationTime(LocalTime.now());
         String token = UUID.randomUUID().toString();
         emailService.sendEmail(customer.getEmail(), "Welcome to our Service",
                 "Thank you for registering! Please click the following link to verify your email: "
                         + "http://localhost:8080/customer/verifyToken?token=" + token);
-        customer.setRegistrationDate(LocalDate.now());
-        customer.setRegistrationTime(LocalTime.now());
         this.token = token;
         this.customer = customer;
         return customerMapper.customerToCustomerSummaryResponse(customer);

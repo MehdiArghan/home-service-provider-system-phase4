@@ -3,16 +3,14 @@ package com.example.homeserviceprovidersystem.service.impl;
 import com.example.homeserviceprovidersystem.customeException.CustomBadRequestException;
 import com.example.homeserviceprovidersystem.customeException.CustomEntityNotFoundException;
 import com.example.homeserviceprovidersystem.customeException.CustomResourceNotFoundException;
-import com.example.homeserviceprovidersystem.dto.expert.ExpertRequest;
-import com.example.homeserviceprovidersystem.dto.expert.ExpertRequestWithEmail;
-import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryRequest;
-import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
+import com.example.homeserviceprovidersystem.dto.expert.*;
 import com.example.homeserviceprovidersystem.entity.Expert;
 import com.example.homeserviceprovidersystem.entity.SubDuty;
 import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.entity.enums.ExpertStatus;
 import com.example.homeserviceprovidersystem.mapper.ExpertMapper;
 import com.example.homeserviceprovidersystem.repositroy.ExpertRepository;
+import com.example.homeserviceprovidersystem.service.EmailService;
 import com.example.homeserviceprovidersystem.service.ExpertService;
 import com.example.homeserviceprovidersystem.service.SubDutyService;
 import com.example.homeserviceprovidersystem.service.WalletService;
@@ -29,6 +27,7 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class ExpertServiceImpl implements ExpertService {
@@ -37,6 +36,9 @@ public class ExpertServiceImpl implements ExpertService {
     private final WalletService walletService;
     private final ExpertMapper expertMapper;
     private final Validator validator;
+    private final EmailService emailService;
+    private String token;
+    private Expert expert;
 
     @Autowired
     public ExpertServiceImpl(
@@ -44,24 +46,31 @@ public class ExpertServiceImpl implements ExpertService {
             ExpertRepository expertRepository,
             WalletService walletService,
             ExpertMapper expertMapper,
-            Validator validator) {
+            Validator validator,
+            EmailService emailService) {
         this.subDutyService = subDutyService;
         this.expertRepository = expertRepository;
         this.walletService = walletService;
         this.expertMapper = expertMapper;
         this.validator = validator;
+        this.emailService = emailService;
     }
 
     @Override
-    public ExpertSummaryResponse save(MultipartFile multipartFile, ExpertRequest request) {
+    public ExpertResponse save(MultipartFile multipartFile, ExpertRequest request) {
         validateRequest(request);
         validateMultiPartFile(multipartFile);
         expertRepository.findByEmail(request.getEmail()).ifPresent(existingExpert -> {
             throw new CustomBadRequestException("Email already exists");
         });
         Expert expert = createExpert(multipartFile, request);
-        Expert savedExpert = expertRepository.save(expert);
-        return expertMapper.expertToExpertSummaryResponse(savedExpert);
+        String token = UUID.randomUUID().toString();
+        emailService.sendEmail(expert.getEmail(), "Welcome to our Service",
+                "Thank you for registering! Please click the following link to verify your email: "
+                        + "http://localhost:8080/expert/verifyToken?token=" + token);
+        this.token = token;
+        this.expert = expert;
+        return expertMapper.expertToExpertResponse(expert);
     }
 
     @Override
@@ -100,7 +109,6 @@ public class ExpertServiceImpl implements ExpertService {
         expert.setPictureData(multipartFile.getOriginalFilename());
         expert.setScore(0);
         expert.setSubDuties(Collections.singleton(foundSubDuty));
-        expert.setWallet(walletService.save(new Wallet(0.0)));
         return expert;
     }
 
@@ -211,5 +219,18 @@ public class ExpertServiceImpl implements ExpertService {
 
     private Specification<Expert> hasScore(int score) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("score"), score));
+    }
+
+    @Override
+    public String verifyToken(String token) {
+        if (token.equals(this.token)) {
+            this.expert.setWallet(walletService.save(new Wallet(0.0)));
+            expertRepository.save(this.expert);
+            this.token = null;
+            this.expert = null;
+            return "successfulRegistration";
+        } else {
+            return "registrationFailed";
+        }
     }
 }
