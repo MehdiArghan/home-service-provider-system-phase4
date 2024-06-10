@@ -1,5 +1,6 @@
 package com.example.homeserviceprovidersystem.mapper;
 
+import com.example.homeserviceprovidersystem.dto.expert.ExpertResponse;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
 import com.example.homeserviceprovidersystem.entity.Expert;
 import com.example.homeserviceprovidersystem.entity.SubDuty;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-06-10T18:51:42+0330",
+    date = "2024-06-10T19:01:58+0330",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 20.0.1 (Oracle Corporation)"
 )
 @Component
@@ -39,5 +40,23 @@ public class ExpertMapperImpl implements ExpertMapper {
         }
 
         return expertSummaryResponse;
+    }
+
+    @Override
+    public ExpertResponse expertToExpertResponse(Expert expert) {
+        if ( expert == null ) {
+            return null;
+        }
+
+        ExpertResponse expertResponse = new ExpertResponse();
+
+        expertResponse.setId( expert.getId() );
+        expertResponse.setFirstName( expert.getFirstName() );
+        expertResponse.setLastName( expert.getLastName() );
+        expertResponse.setEmail( expert.getEmail() );
+        expertResponse.setRegistrationDate( expert.getRegistrationDate() );
+        expertResponse.setRegistrationTime( expert.getRegistrationTime() );
+
+        return expertResponse;
     }
 }

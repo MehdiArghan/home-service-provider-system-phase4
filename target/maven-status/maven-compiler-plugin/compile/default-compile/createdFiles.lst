@@ -29,11 +29,13 @@ com\example\homeserviceprovidersystem\dto\person\PersonSummaryResponse.class
 com\example\homeserviceprovidersystem\entity\Address.class
 com\example\homeserviceprovidersystem\customeException\CustomIoException.class
 com\example\homeserviceprovidersystem\mapper\ExpertSuggestionsMapperImpl.class
+com\example\homeserviceprovidersystem\dto\expert\ExpertResponse.class
 com\example\homeserviceprovidersystem\mapper\CommentsMapperImpl.class
 com\example\homeserviceprovidersystem\service\impl\OrdersServiceImpl.class
 com\example\homeserviceprovidersystem\service\CaptchaService.class
 com\example\homeserviceprovidersystem\service\impl\ExpertSuggestionsImpl.class
 com\example\homeserviceprovidersystem\dto\expertsuggestion\ExpertSuggestionsRequestWithId.class
+com\example\homeserviceprovidersystem\service\EmailService.class
 com\example\homeserviceprovidersystem\service\SubDutyService.class
 com\example\homeserviceprovidersystem\entity\Admin.class
 com\example\homeserviceprovidersystem\dto\wallet\WalletResponse.class
@@ -44,6 +46,7 @@ com\example\homeserviceprovidersystem\dto\expert\ExpertRequestWithEmail.class
 com\example\homeserviceprovidersystem\dto\expert\ExpertSummaryResponse.class
 com\example\homeserviceprovidersystem\dto\order\OrdersResponse.class
 com\example\homeserviceprovidersystem\mapper\CustomerMapper.class
+com\example\homeserviceprovidersystem\dto\person\PersonRequestWithRegistrationTime.class
 com\example\homeserviceprovidersystem\dto\customer\CustomerResponse.class
 com\example\homeserviceprovidersystem\base\BaseEntity.class
 com\example\homeserviceprovidersystem\dto\comments\CommentSummaryResponse.class
@@ -92,6 +95,7 @@ com\example\homeserviceprovidersystem\mapper\WalletMapperImpl.class
 com\example\homeserviceprovidersystem\dto\person\PersonResponse.class
 com\example\homeserviceprovidersystem\service\impl\CaptchaServiceImpl.class
 com\example\homeserviceprovidersystem\mapper\WalletMapper.class
+com\example\homeserviceprovidersystem\service\impl\EmailServiceImpl.class
 com\example\homeserviceprovidersystem\dto\order\OrderSummaryRequestWithOrderStatus.class
 com\example\homeserviceprovidersystem\repositroy\WalletRepository.class
 com\example\homeserviceprovidersystem\customeException\GlobalException.class
