@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -26,7 +27,7 @@ public class JwtService {
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(SECRET_KEY)))
+                .setSigningKey(getSingInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -43,5 +44,20 @@ public class JwtService {
 
     private Date extractExpiration(String token) {
         return extractClaims(token, Claims::getExpiration);
+    }
+
+    private Key getSingInKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    }
+
+
+    public String generateToken(UserDetails userDetails) {
+        return Jwts
+                .builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60)))
+                .signWith(getSingInKey())
+                .compact();
     }
 }
