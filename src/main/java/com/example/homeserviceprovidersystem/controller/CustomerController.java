@@ -14,6 +14,7 @@ import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggesti
 import com.example.homeserviceprovidersystem.dto.order.OrderRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
 import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
@@ -110,6 +111,10 @@ public class CustomerController {
     @PatchMapping(value = "/orderPayment")
     public ResponseEntity<OrdersResponse> orderPayment(@Valid @RequestBody OrderSummaryRequest request) {
         return new ResponseEntity<>(ordersService.orderPayment(request), HttpStatus.OK);
+    }
+    @PatchMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        return new ResponseEntity<>(customerService.changePassword(request), HttpStatus.OK);
     }
 
     @GetMapping(value = "/findAllSubDuty")

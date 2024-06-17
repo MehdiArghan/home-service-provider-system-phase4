@@ -5,6 +5,7 @@ import com.example.homeserviceprovidersystem.customeException.CustomEntityNotFou
 import com.example.homeserviceprovidersystem.dto.customer.CustomerRequest;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.customer.CustomerSummaryResponse;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
 import com.example.homeserviceprovidersystem.entity.Customer;
 import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.mapper.CustomerMapper;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -88,6 +91,20 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer findById(Long id) {
         return customerRepository.findById(id)
                 .orElseThrow(() -> new CustomEntityNotFoundException("customer with this id was not found"));
+    }
+
+    @Override
+    public String changePassword(ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomerDetails customerDetails = (CustomerDetails) authentication.getPrincipal();
+        String  customerEmail = customerDetails.getCustomer().getEmail();
+        Customer foundCustomer = findByEmail(customerEmail);
+        if (!passwordEncoder.matches(request.getPreviousPassword(),foundCustomer.getPassword())) {
+            throw new CustomEntityNotFoundException("Admin with this password was not found");
+        }
+        foundCustomer.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        customerRepository.save(customer);
+        return "password changed successfully";
     }
 
     @Override
