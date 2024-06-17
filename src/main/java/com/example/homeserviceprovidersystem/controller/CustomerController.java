@@ -114,9 +114,6 @@ public class CustomerController {
 
     @GetMapping(value = "/findAllSubDuty")
     public ResponseEntity<List<SubDutyResponse>> findAllSubDuty() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomerDetails customerDetails = (CustomerDetails) authentication.getPrincipal();
-        System.out.println(customerDetails.getCustomer().getEmail());
         return new ResponseEntity<>(subDutyService.findAll(), HttpStatus.OK);
     }
 

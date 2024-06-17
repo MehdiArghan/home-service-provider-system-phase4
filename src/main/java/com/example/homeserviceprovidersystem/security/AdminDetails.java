@@ -3,6 +3,7 @@ package com.example.homeserviceprovidersystem.security;
 import com.example.homeserviceprovidersystem.entity.Admin;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@Getter
 public class AdminDetails implements UserDetails {
     private final Admin admin;
 

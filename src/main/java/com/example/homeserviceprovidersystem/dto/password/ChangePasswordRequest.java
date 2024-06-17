@@ -14,10 +14,10 @@ import lombok.experimental.FieldDefaults;
 public class ChangePasswordRequest {
     @NotBlank(message = "please enter an appropriate password")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$",
-            message = "Password must be at least 8 characters long and contain at least one letter and one number")
+            message = "previousPassword must be at least 8 characters long and contain at least one letter and one number")
     String previousPassword;
     @NotBlank(message = "please enter an appropriate password")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$",
-            message = "Password must be at least 8 characters long and contain at least one letter and one number")
+            message = "newPassword must be at least 8 characters long and contain at least one letter and one number")
     String newPassword;
 }

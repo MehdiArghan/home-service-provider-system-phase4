@@ -9,6 +9,7 @@ import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.expert.ExpertSummaryResponse;
 import com.example.homeserviceprovidersystem.dto.order.OrderSummaryRequestWithOrderStatus;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequest;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithBasePrice;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithDescription;
@@ -63,6 +64,11 @@ public class AdminController {
     @PatchMapping("/expertConfirmation")
     public ResponseEntity<ExpertSummaryResponse> expertConfirmation(@Valid @RequestBody ExpertRequestWithEmail request) {
         return new ResponseEntity<>(expertService.expertConfirmation(request), HttpStatus.OK);
+    }
+
+    @PatchMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        return new ResponseEntity<>(adminService.changePassword(request), HttpStatus.OK);
     }
 
     @GetMapping(value = "/findAllDuty")
