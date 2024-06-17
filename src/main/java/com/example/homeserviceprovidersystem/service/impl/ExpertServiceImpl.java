@@ -10,6 +10,7 @@ import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.entity.enums.ExpertStatus;
 import com.example.homeserviceprovidersystem.mapper.ExpertMapper;
 import com.example.homeserviceprovidersystem.repositroy.ExpertRepository;
+import com.example.homeserviceprovidersystem.security.*;
 import com.example.homeserviceprovidersystem.service.EmailService;
 import com.example.homeserviceprovidersystem.service.ExpertService;
 import com.example.homeserviceprovidersystem.service.SubDutyService;
@@ -19,6 +20,8 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +42,8 @@ public class ExpertServiceImpl implements ExpertService {
     private final Validator validator;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     private String token;
     private Expert expert;
 
@@ -50,7 +55,9 @@ public class ExpertServiceImpl implements ExpertService {
             ExpertMapper expertMapper,
             Validator validator,
             EmailService emailService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            JwtService jwtService) {
         this.subDutyService = subDutyService;
         this.expertRepository = expertRepository;
         this.walletService = walletService;
@@ -58,6 +65,8 @@ public class ExpertServiceImpl implements ExpertService {
         this.validator = validator;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -75,6 +84,17 @@ public class ExpertServiceImpl implements ExpertService {
         this.token = token;
         this.expert = expert;
         return expertMapper.expertToExpertResponse(expert);
+    }
+
+    @Override
+    public AuthenticationResponse autheticate(AuthenticationRequest request) {
+        UserDetailsServiceImpl.userType = "EXPERT";
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        Expert findExpert = findByEmail(request.getUsername());
+        String token = jwtService.generateToken(new ExpertDetails(findExpert), "EXPERT");
+        return AuthenticationResponse.builder().token(token).build();
     }
 
     @Override

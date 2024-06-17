@@ -11,6 +11,8 @@ import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
+import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
+import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +48,11 @@ public class ExpertController {
         return new ResponseEntity<>(savedExpert, HttpStatus.CREATED);
     }
 
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
+      return new ResponseEntity<>(expertService.autheticate(request),HttpStatus.OK);
+    }
+
     @PostMapping(value = "/addExpertSuggestion")
     public ResponseEntity<ExpertSuggestionsResponse> saveExpertSuggestion(@Valid @RequestBody ExpertSuggestionsSummaryRequest request) {
         return new ResponseEntity<>(expertSuggestionsService.save(request), HttpStatus.CREATED);
@@ -75,6 +82,7 @@ public class ExpertController {
     public ResponseEntity<WalletResponse> showWallet(@Valid @RequestBody PersonRequestWithEmail request) {
         return new ResponseEntity<>(walletService.findWallet(request, "expert"), HttpStatus.OK);
     }
+
     @GetMapping("/verifyToken")
     public String verifyToken(@RequestParam("token") String token) {
         return expertService.verifyToken(token);

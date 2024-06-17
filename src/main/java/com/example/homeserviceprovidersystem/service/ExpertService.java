@@ -2,12 +2,16 @@ package com.example.homeserviceprovidersystem.service;
 
 import com.example.homeserviceprovidersystem.dto.expert.*;
 import com.example.homeserviceprovidersystem.entity.Expert;
+import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
+import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ExpertService {
     ExpertResponse save(MultipartFile multipartFile, ExpertRequest request);
+
+    AuthenticationResponse autheticate(AuthenticationRequest request);
 
     Expert save(Expert expert);
 

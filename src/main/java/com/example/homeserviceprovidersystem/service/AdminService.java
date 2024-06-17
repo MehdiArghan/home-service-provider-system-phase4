@@ -5,7 +5,7 @@ import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
 import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
 
 public interface AdminService {
-    Admin findByEmail(String email);
-
     AuthenticationResponse authenticate(AuthenticationRequest request);
+
+    Admin findByEmail(String email);
 }
