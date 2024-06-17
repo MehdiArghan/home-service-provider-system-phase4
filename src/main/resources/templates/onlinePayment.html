@@ -24,7 +24,8 @@
                 <div class="card-header text-center"><h4 class="text-center">Online Payment Portal</h4></div>
 
                 <div class="card-body">
-                    <form th:action="@{'/customer/onlinePayment/' + ${customerEmail} + '/' + ${orderId}}" method="post" target="_self">
+                    <form th:action="@{'/customer/onlinePayment/' + ${customerEmail} + '/' + ${orderId}}" method="post"
+                          target="_self">
 
                         <div class="mb-3">
                             <label for="cardNumber1" class="form-label">Credit Card Number :</label>

@@ -87,7 +87,7 @@ public class ExpertServiceImpl implements ExpertService {
     }
 
     @Override
-    public AuthenticationResponse autheticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
         UserDetailsServiceImpl.userType = "EXPERT";
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())

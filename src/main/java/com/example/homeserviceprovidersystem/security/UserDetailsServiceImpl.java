@@ -8,21 +8,31 @@ import com.example.homeserviceprovidersystem.service.AdminService;
 import com.example.homeserviceprovidersystem.service.CustomerService;
 import com.example.homeserviceprovidersystem.service.ExpertService;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDetailsServiceImpl implements UserDetailsService {
     public static String userType = "";
     final AdminService adminService;
     final CustomerService customerService;
     final ExpertService expertService;
+
+    @Autowired
+    public UserDetailsServiceImpl(
+            @Lazy AdminService adminService,
+            @Lazy CustomerService customerService,
+            @Lazy ExpertService expertService) {
+        this.adminService = adminService;
+        this.customerService = customerService;
+        this.expertService = expertService;
+    }
 
 
     @Override

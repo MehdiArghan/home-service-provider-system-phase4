@@ -11,7 +11,7 @@ import java.util.List;
 public interface ExpertService {
     ExpertResponse save(MultipartFile multipartFile, ExpertRequest request);
 
-    AuthenticationResponse autheticate(AuthenticationRequest request);
+    AuthenticationResponse authenticate(AuthenticationRequest request);
 
     Expert save(Expert expert);
 

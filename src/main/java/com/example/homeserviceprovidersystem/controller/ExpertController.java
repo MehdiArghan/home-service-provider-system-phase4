@@ -50,7 +50,7 @@ public class ExpertController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
-      return new ResponseEntity<>(expertService.autheticate(request),HttpStatus.OK);
+        return new ResponseEntity<>(expertService.authenticate(request), HttpStatus.OK);
     }
 
     @PostMapping(value = "/addExpertSuggestion")
