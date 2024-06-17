@@ -4,6 +4,8 @@ import com.example.homeserviceprovidersystem.customeException.CustomBadRequestEx
 import com.example.homeserviceprovidersystem.customeException.CustomEntityNotFoundException;
 import com.example.homeserviceprovidersystem.customeException.CustomResourceNotFoundException;
 import com.example.homeserviceprovidersystem.dto.expert.*;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
+import com.example.homeserviceprovidersystem.entity.Customer;
 import com.example.homeserviceprovidersystem.entity.Expert;
 import com.example.homeserviceprovidersystem.entity.SubDuty;
 import com.example.homeserviceprovidersystem.entity.Wallet;
@@ -22,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -148,6 +152,20 @@ public class ExpertServiceImpl implements ExpertService {
                     }
                 })
                 .orElseThrow(() -> new CustomEntityNotFoundException("no expert was found with this id"));
+    }
+
+    @Override
+    public String changePassword(ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ExpertDetails expertDetails = (ExpertDetails) authentication.getPrincipal();
+        String  expertEmail = expertDetails.getExpert().getEmail();
+        Expert foundExpert = findByEmail(expertEmail);
+        if (!passwordEncoder.matches(request.getPreviousPassword(),foundExpert.getPassword())) {
+            throw new CustomEntityNotFoundException("Expert with this password was not found");
+        }
+        foundExpert.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        expertRepository.save(foundExpert);
+        return "password changed successfully";
     }
 
     @Override

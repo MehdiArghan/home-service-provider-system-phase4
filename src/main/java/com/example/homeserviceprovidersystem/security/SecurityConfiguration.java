@@ -73,6 +73,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/expert/addExpert").permitAll()
                         .requestMatchers("/expert/authenticate").permitAll()
                         .requestMatchers("/expert/addExpertSuggestion").hasAuthority("EXPERT")
+                        .requestMatchers("/expert/changePassword").hasAuthority("EXPERT")
                         .requestMatchers("/expert/showScore").hasAuthority("EXPERT")
                         .requestMatchers("/expert/findAllSubDuty").hasAuthority("EXPERT")
                         .requestMatchers("/expert/findAllOrders").hasAuthority("EXPERT")

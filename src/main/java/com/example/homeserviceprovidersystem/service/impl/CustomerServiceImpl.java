@@ -100,10 +100,10 @@ public class CustomerServiceImpl implements CustomerService {
         String  customerEmail = customerDetails.getCustomer().getEmail();
         Customer foundCustomer = findByEmail(customerEmail);
         if (!passwordEncoder.matches(request.getPreviousPassword(),foundCustomer.getPassword())) {
-            throw new CustomEntityNotFoundException("Admin with this password was not found");
+            throw new CustomEntityNotFoundException("Customer with this password was not found");
         }
         foundCustomer.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        customerRepository.save(customer);
+        customerRepository.save(foundCustomer);
         return "password changed successfully";
     }
 

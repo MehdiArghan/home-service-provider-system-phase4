@@ -1,6 +1,7 @@
 package com.example.homeserviceprovidersystem.service;
 
 import com.example.homeserviceprovidersystem.dto.expert.*;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
 import com.example.homeserviceprovidersystem.entity.Expert;
 import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
 import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
@@ -16,6 +17,8 @@ public interface ExpertService {
     Expert save(Expert expert);
 
     ExpertSummaryResponse expertConfirmation(ExpertRequestWithEmail request);
+
+    String changePassword(ChangePasswordRequest request);
 
     Expert findById(Long id);
 

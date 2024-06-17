@@ -7,6 +7,7 @@ import com.example.homeserviceprovidersystem.dto.expert.ExpertResponse;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsResponse;
 import com.example.homeserviceprovidersystem.dto.expertsuggestion.ExpertSuggestionsSummaryRequest;
 import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
+import com.example.homeserviceprovidersystem.dto.password.ChangePasswordRequest;
 import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithName;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
@@ -57,7 +58,10 @@ public class ExpertController {
     public ResponseEntity<ExpertSuggestionsResponse> saveExpertSuggestion(@Valid @RequestBody ExpertSuggestionsSummaryRequest request) {
         return new ResponseEntity<>(expertSuggestionsService.save(request), HttpStatus.CREATED);
     }
-
+    @PatchMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        return new ResponseEntity<>(expertService.changePassword(request), HttpStatus.OK);
+    }
     @GetMapping(value = "/showScore")
     public ResponseEntity<CommentSummaryResponse> findScore(@Valid @RequestBody CommentSummaryRequest request) {
         return new ResponseEntity<>(commentsService.findScore(request), HttpStatus.OK);

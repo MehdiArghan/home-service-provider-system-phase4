@@ -3,6 +3,7 @@ package com.example.homeserviceprovidersystem.security;
 import com.example.homeserviceprovidersystem.entity.Expert;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
+@Getter
 public class ExpertDetails implements UserDetails {
    private final Expert expert;
 
