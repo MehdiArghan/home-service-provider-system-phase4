@@ -9,11 +9,14 @@ import com.example.homeserviceprovidersystem.entity.Customer;
 import com.example.homeserviceprovidersystem.entity.Wallet;
 import com.example.homeserviceprovidersystem.mapper.CustomerMapper;
 import com.example.homeserviceprovidersystem.repositroy.CustomerRepository;
+import com.example.homeserviceprovidersystem.security.*;
 import com.example.homeserviceprovidersystem.service.CustomerService;
 import com.example.homeserviceprovidersystem.service.EmailService;
 import com.example.homeserviceprovidersystem.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     private String token;
     private Customer customer;
 
@@ -38,12 +43,16 @@ public class CustomerServiceImpl implements CustomerService {
             WalletService walletService,
             CustomerMapper customerMapper,
             EmailService emailService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            JwtService jwtService) {
         this.customerRepository = customerRepository;
         this.walletService = walletService;
         this.customerMapper = customerMapper;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -62,6 +71,17 @@ public class CustomerServiceImpl implements CustomerService {
         this.token = token;
         this.customer = customer;
         return customerMapper.customerToCustomerSummaryResponse(customer);
+    }
+
+    @Override
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        UserDetailsServiceImpl.userType = "CUSTOMER";
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        Customer findCustomer = findByEmail(request.getUsername());
+        String generateToken = jwtService.generateToken(new CustomerDetails(findCustomer), "CUSTOMER");
+        return AuthenticationResponse.builder().token(generateToken).build();
     }
 
     @Override

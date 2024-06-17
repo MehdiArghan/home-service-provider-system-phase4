@@ -17,6 +17,8 @@ import com.example.homeserviceprovidersystem.dto.order.OrdersResponse;
 import com.example.homeserviceprovidersystem.dto.person.PersonRequestWithEmail;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
+import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
+import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,6 +49,11 @@ public class CustomerController {
     @PostMapping("/addCustomer")
     public ResponseEntity<CustomerSummaryResponse> saveCustomer(@Valid @RequestBody CustomerRequest request) {
         return new ResponseEntity<>(customerService.save(request), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
+        return new ResponseEntity<>(customerService.authenticate(request), HttpStatus.OK);
     }
 
     @PostMapping("/saveOrders")

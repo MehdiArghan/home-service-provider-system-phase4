@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers("/admin/authenticate").permitAll()
                         .requestMatchers("/admin/addDuty").hasAuthority("ADMIN")
                         .requestMatchers("/admin/addSubDuty").hasAuthority("ADMIN")
                         .requestMatchers("/admin/editDescriptionSubDuty").hasAuthority("ADMIN")
@@ -43,6 +44,7 @@ public class SecurityConfiguration {
 
 
                         .requestMatchers("/customer/addCustomer").permitAll()
+                        .requestMatchers("/customer/authenticate").permitAll()
                         .requestMatchers("/customer/saveOrders").hasAuthority("CUSTOMER")
                         .requestMatchers("/customer/selectExpertSuggestion").hasAuthority("CUSTOMER")
                         .requestMatchers("/customer/addComment").hasAuthority("CUSTOMER")

@@ -36,8 +36,8 @@ public class AdminController {
     final AdminService adminService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(adminService.authenticate(request));
+    public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest request) {
+        return new ResponseEntity<>(adminService.authenticate(request), HttpStatus.OK);
     }
 
     @PostMapping(value = "/addDuty")
