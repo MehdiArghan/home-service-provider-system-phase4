@@ -14,7 +14,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class AdminDetails implements UserDetails {
-    Admin admin;
+    private final Admin admin;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

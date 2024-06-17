@@ -14,7 +14,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class CustomerDetails implements UserDetails {
-    final Customer customer;
+    private final Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

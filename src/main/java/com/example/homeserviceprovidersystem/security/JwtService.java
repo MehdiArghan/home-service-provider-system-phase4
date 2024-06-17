@@ -51,12 +51,16 @@ public class JwtService {
     }
 
 
+    public String extractRole(String token) {
+        return extractClaims(token, claims -> claims.get("role", String.class));
+    }
+
     public String generateToken(UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60)))
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 24)))
                 .signWith(getSingInKey())
                 .compact();
     }

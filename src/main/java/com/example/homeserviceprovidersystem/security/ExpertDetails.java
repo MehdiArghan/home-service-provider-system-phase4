@@ -14,7 +14,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 public class ExpertDetails implements UserDetails {
-    final Expert expert;
+   private final Expert expert;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
