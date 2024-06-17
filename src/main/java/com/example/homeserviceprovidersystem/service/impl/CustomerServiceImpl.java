@@ -14,6 +14,7 @@ import com.example.homeserviceprovidersystem.service.EmailService;
 import com.example.homeserviceprovidersystem.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final WalletService walletService;
     private final CustomerMapper customerMapper;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
     private String token;
     private Customer customer;
 
@@ -35,11 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
             CustomerRepository customerRepository,
             WalletService walletService,
             CustomerMapper customerMapper,
-            EmailService emailService) {
+            EmailService emailService,
+            PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.walletService = walletService;
         this.customerMapper = customerMapper;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -48,6 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomBadRequestException("Email already exists");
         });
         Customer customer = customerMapper.customerRequestTocustomer(request);
+        customer.setPassword(passwordEncoder.encode(request.getPassword()));
         customer.setRegistrationDate(LocalDate.now());
         customer.setRegistrationTime(LocalTime.now());
         String token = UUID.randomUUID().toString();

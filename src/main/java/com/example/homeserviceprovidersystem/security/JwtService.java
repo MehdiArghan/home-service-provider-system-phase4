@@ -55,9 +55,10 @@ public class JwtService {
         return extractClaims(token, claims -> claims.get("role", String.class));
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String role) {
         return Jwts
                 .builder()
+                .claim("role", role)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 24)))

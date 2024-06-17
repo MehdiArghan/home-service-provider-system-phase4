@@ -19,6 +19,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +38,7 @@ public class ExpertServiceImpl implements ExpertService {
     private final ExpertMapper expertMapper;
     private final Validator validator;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
     private String token;
     private Expert expert;
 
@@ -47,13 +49,15 @@ public class ExpertServiceImpl implements ExpertService {
             WalletService walletService,
             ExpertMapper expertMapper,
             Validator validator,
-            EmailService emailService) {
+            EmailService emailService,
+            PasswordEncoder passwordEncoder) {
         this.subDutyService = subDutyService;
         this.expertRepository = expertRepository;
         this.walletService = walletService;
         this.expertMapper = expertMapper;
         this.validator = validator;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -102,7 +106,7 @@ public class ExpertServiceImpl implements ExpertService {
         expert.setFirstName(request.getFirstName());
         expert.setLastName(request.getLastName());
         expert.setEmail(request.getEmail());
-        expert.setPassword(request.getPassword());
+        expert.setPassword(passwordEncoder.encode(request.getPassword()));
         expert.setRegistrationDate(LocalDate.now());
         expert.setRegistrationTime(LocalTime.now());
         expert.setExpertStatus(ExpertStatus.DISABLE);

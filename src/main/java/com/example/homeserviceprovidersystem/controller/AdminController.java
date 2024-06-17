@@ -13,6 +13,8 @@ import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequest;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithBasePrice;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyRequestWithDescription;
 import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
+import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
+import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,12 @@ public class AdminController {
     final ExpertService expertService;
     final CustomerService customerService;
     final OrdersService ordersService;
+    final AdminService adminService;
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+        return ResponseEntity.ok(adminService.authenticate(request));
+    }
 
     @PostMapping(value = "/addDuty")
     public ResponseEntity<DutyResponse> saveDuty(@Valid @RequestBody DutyRequest dutyRequest) {
