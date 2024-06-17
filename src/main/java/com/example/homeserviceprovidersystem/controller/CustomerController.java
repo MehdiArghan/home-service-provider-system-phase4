@@ -19,6 +19,7 @@ import com.example.homeserviceprovidersystem.dto.subduty.SubDutyResponse;
 import com.example.homeserviceprovidersystem.dto.wallet.WalletResponse;
 import com.example.homeserviceprovidersystem.security.AuthenticationRequest;
 import com.example.homeserviceprovidersystem.security.AuthenticationResponse;
+import com.example.homeserviceprovidersystem.security.CustomerDetails;
 import com.example.homeserviceprovidersystem.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +29,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -111,6 +114,9 @@ public class CustomerController {
 
     @GetMapping(value = "/findAllSubDuty")
     public ResponseEntity<List<SubDutyResponse>> findAllSubDuty() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomerDetails customerDetails = (CustomerDetails) authentication.getPrincipal();
+        System.out.println(customerDetails.getCustomer().getEmail());
         return new ResponseEntity<>(subDutyService.findAll(), HttpStatus.OK);
     }
 
